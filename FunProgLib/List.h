@@ -1,4 +1,18 @@
+// Fun Programming Data Structures 1.0
+// 
+// Copyright © 2020 Greg Eakin. 
+//
+// Greg Eakin <greg@eakin.dev>
+//
+// All Rights Reserved.
+//
+// Okasaki, Chris. "2.1 Lists." Purely Functional Data Structures. 
+//     Cambridge, U.K.: Cambridge UP, 1998. 7-11. Print.
+
 #pragma once
+#include <memory>
+
+using namespace std;
 namespace FunProgLib
 {
    namespace Lists

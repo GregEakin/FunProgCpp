@@ -1,96 +1,30 @@
+// Fun Programming Data Structures 1.0
+// 
+// Copyright © 2020 Greg Eakin. 
+//
+// Greg Eakin <greg@eakin.dev>
+//
+// All Rights Reserved.
+//
+
 #include "pch.h"
 #include "CppUnitTest.h"
-#include <iostream>
-#include <utility>
 #include <vector>
+#include "../FunProgLib/List.h"
 
 using namespace std;
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
+using namespace FunProgLib::Lists;
 
 namespace FunProgCpp
 {
-   template <class T>
-   struct List
-   {
-      List() = delete;
-      List(const List&) = delete;
-      List(List&&) = delete;
-      ~List() = delete;
-
-      List& operator=(const List&) = delete;
-      List& operator=(List&&) = delete;
-
-      struct Node
-      {
-         const T element_;
-         const shared_ptr<Node> next_;
-
-         Node() = delete;
-         Node(T element, shared_ptr<Node> next) : element_(std::move(element)), next_(std::move(next)) {}
-         Node(const Node&) = default;
-         Node(Node&&) = default;
-         ~Node() = default;
-
-         Node& operator=(const Node&) = default;
-         Node& operator=(Node&&) = default;
-      };
-
-      static shared_ptr<Node> Empty()
-      {
-         return nullptr;
-      }
-
-      static bool isEmpty(const shared_ptr<Node>& list)
-      {
-         return list == nullptr;
-      }
-
-      static shared_ptr<Node> Cons(const T element, const shared_ptr<Node>& list)
-      {
-         return make_shared<Node>(element, list);
-      }
-
-      static T Head(const shared_ptr<Node>& list)
-      {
-         if (isEmpty(list)) throw runtime_error("Null list.");
-         return list->element_;
-      }
-
-      static shared_ptr<Node> Tail(const shared_ptr<Node>& list)
-      {
-         if (isEmpty(list)) throw runtime_error("Null list.");
-         return list->next_;
-      }
-
-      static shared_ptr<Node> Cat(const shared_ptr<Node>& list1, const shared_ptr<Node>& list2)
-      {
-         if (isEmpty(list1)) return list2;
-         if (isEmpty(list2)) return list1;
-         return make_shared<Node>(list1->element_, Cat(list1->next_, list2));
-      }
-
-      static shared_ptr<Node> Reverse(const shared_ptr<Node>& list)
-      {
-         if (isEmpty(list)) return Empty();
-         if (isEmpty(list->next_)) return list;
-         return Rev(list, Empty());
-      }
-
-      static shared_ptr<Node> Rev(const shared_ptr<Node>& listIn, const shared_ptr<Node>& listOut)
-      {
-         if (isEmpty(listIn)) return listOut;
-         const auto next = make_shared<Node>(Head(listIn), listOut);
-         return Rev(Tail(listIn), next);
-      }
-   };
-
    TEST_CLASS(CountedReferenceCpp)
    {
    public:
 
       TEST_METHOD(IsEmptyTest)
       {
-         auto list = List<string>::Empty();
+         auto list = FunProgLib::Lists::List<string>::Empty();
          Assert::IsTrue(List<string>::isEmpty(list));
 
          list = List<string>::Cons("A", list);
@@ -119,7 +53,7 @@ namespace FunProgCpp
       {
          const auto list = List<string>::Cons("Wow", List<string>::Empty());
          const auto reverse = List<string>::Reverse(list);
-         Assert::AreEqual((void*)list.get(), (void*)reverse.get());
+         Assert::AreEqual(static_cast<void*>(list.get()), static_cast<void*>(reverse.get()));
       }
 
       vector<string> split(const string& s, char delim) const {
@@ -127,9 +61,8 @@ namespace FunProgCpp
          stringstream ss(s);
          string item;
 
-         while (getline(ss, item, delim)) {
+         while (getline(ss, item, delim))
             result.push_back(item);
-         }
 
          return result;
       }
@@ -164,7 +97,7 @@ namespace FunProgCpp
             right = List<string>::Cons(ww1, right);
 
          const auto list = List<string>::Cat(left, right);
-         Assert::AreEqual((void*)list.get(), (void*)right.get());
+         Assert::AreEqual(static_cast<void*>(list.get()), static_cast<void*>(right.get()));
       }
 
       TEST_METHOD(CatRightEmptyTest)
@@ -177,7 +110,7 @@ namespace FunProgCpp
          const auto right = List<string>::Empty();
 
          const auto list = List<string>::Cat(left, right);
-         Assert::AreEqual((void*)list.get(), (void*)left.get());
+         Assert::AreEqual(static_cast<void*>(list.get()), static_cast<void*>(left.get()));
       }
 
       TEST_METHOD(CatTest)
